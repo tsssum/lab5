@@ -33,13 +33,14 @@ int checkFile(std::ifstream& file);
 int task1(int* begin, int* end);
 void findNulls(int* begin, int* end, int*& first, int*& second);
 int task2(int* begin, int* end);
+void circleShiftToRight(int* arr, int size);
 void task3(int* arr, int size);
 
 int main()
 {
 	SetConsoleOutputCP(1251);
 
-	std::ifstream file("test1.txt");
+	std::ifstream file("test3.txt");
 
 	int a{}, b{};
 	TLambda preamble[3] = {
@@ -70,7 +71,6 @@ int main()
 				break;
 			default:
 				fill(arr, size, file);
-				file.close();
 				break;
 			}
 
@@ -79,7 +79,6 @@ int main()
 			case 1:
 			{
 				std::cout << "Номер максимального элемента массива: " << task1(arr, arr + size) << '\n';
-				free_memory(arr);
 			}
 				break;
 
@@ -90,7 +89,6 @@ int main()
 					std::cout << "В массиве нет достаточного количества нулей" << '\n';
 				else
 					std::cout << "Произведение элементов массива между первыми двумя нулями = " << res << '\n';
-				free_memory(arr);
 			}
 				break;
 
@@ -98,10 +96,10 @@ int main()
 			{
 				task3(arr, size);
 				print(arr, size);
-				free_memory(arr);
 			}
 				break;
 			}
+		free_memory(arr);
 		option = exit();
 		}
 	} while (option != 4);
@@ -191,9 +189,9 @@ void free_memory(int*& arr)
 void print(int* arr, int size)
 {
 	std::cout << '\n';
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i != size; i++)
 	{
-		std::cout << arr[i] << ' ';
+		std::cout << arr[i] <<' ';
 	}
 	std::cout << '\n';
 }
@@ -263,25 +261,49 @@ int task2(int* begin, int* end)
 }
 
 //переделать массив так чтоб всё что было на нечёт местах стало в перю половину и наоборот
+//void task3(int* arr, int size)
+//{
+//	int temp{};
+//	if (size % 2)
+//	{
+//		for (int i = 1; i < size / 2; i += 2)
+//		{
+//			temp = arr[i];
+//			arr[i] = arr[size - i];
+//			arr[size - i] = temp;
+//		}
+//	}
+//	else
+//	{
+//		for (int i = 1; i < size / 2; i += 2)
+//		{
+//			temp = arr[i];
+//			arr[i] = arr[size - i-1];
+//			arr[size - i-1] = temp;
+//		}
+//	}
+//}
+
+
+void circleShiftToRight(int* arr, int size)
+{
+	int tmp = arr[size - 1];
+	for (int i = size - 1; i > 0; --i)
+	{
+		arr[i] = arr[i - 1];
+	}
+	arr[0] = tmp;
+}
+
 void task3(int* arr, int size)
 {
-	int temp{};
-	if (size % 2)
+	int cnt{0};
+	for (int i = 1; i != size; ++i)
 	{
-		for (int i = 1; i < size / 2; i += 2)
+		if (!(i % 2))
 		{
-			temp = arr[i];
-			arr[i] = arr[size - i];
-			arr[size - i] = temp;
-		}
-	}
-	else
-	{
-		for (int i = 1; i < size / 2; i += 2)
-		{
-			temp = arr[i];
-			arr[i] = arr[size - i-1];
-			arr[size - i-1] = temp;
+			++cnt;
+			circleShiftToRight(&arr[cnt], i + 1 - cnt);
 		}
 	}
 }
